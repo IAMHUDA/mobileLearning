@@ -1,9 +1,8 @@
-import 'Courses.dart';
+import 'package:flutter/material.dart';
 import 'HomeScreen.dart';
+import 'CourseMaterial.dart'; // alias QuizMaterial
 import 'Messages.dart';
 import 'Profile.dart';
-import 'Search.dart';
-import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,25 +19,24 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'ComicSansMS',
       ),
-      home: const MyHomePage(),
+      home: const MainNavigationWrapper(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class MainNavigationWrapper extends StatefulWidget {
+  const MainNavigationWrapper({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MainNavigationWrapper> createState() => _MainNavigationWrapperState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   int selectedIndex = 0;
 
   final List<Widget> pages = [
     const HomeScreen(),
-    const Courses(),
-    const Search(),
+    QuizMaterial(), // pastikan ini didefinisikan di CourseMaterial.dart
     const Messages(),
     const Profile(),
   ];
@@ -54,49 +52,63 @@ class _MyHomePageState extends State<MyHomePage> {
         children: pages,
       ),
       bottomNavigationBar: SizedBox(
-        height: 80,
+        height: 70,
         width: size.width,
-        child: Stack(
-          children: [
-            CustomPaint(
-              size: Size(size.width, 80),
-              painter: BNBCustomerPainter(),
-            ),
-            SizedBox(
-              width: size.width,
-              height: 80,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  buildNavItem(Icons.home_outlined, Icons.home, 0),
-                  buildNavItem(Icons.album_outlined, Icons.album, 1),
-                  buildNavItem(Icons.search_outlined, Icons.search, 2),
-                  buildNavItem(Icons.message_outlined, Icons.message, 3),
-                  buildNavItem(Icons.person_outline, Icons.person, 4),
-                ],
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Stack(
+            children: [
+              CustomPaint(
+                size: Size(size.width, 70),
+                painter: BNBCustomerPainter(),
               ),
-            ),
-          ],
+              Center(
+                heightFactor: 0.6,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    buildNavItem(Icons.home_outlined, Icons.home, 0, 'Beranda'),
+                    buildNavItem(Icons.assignment_outlined, Icons.assignment, 1, 'Tugas'),
+                    buildNavItem(Icons.feedback_outlined, Icons.feedback, 2, 'Feedback'),
+                    buildNavItem(Icons.person_outline, Icons.person, 3, 'Profil'),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget buildNavItem(IconData icon, IconData activeIcon, int index) {
+  Widget buildNavItem(IconData icon, IconData activeIcon, int index, String label) {
     bool isSelected = selectedIndex == index;
-    Color activeColor = Colors.blue;
-    Color inactiveColor = Colors.grey;
+    Color activeColor = Colors.deepPurple;
+    Color inactiveColor = Colors.grey.shade600;
 
-    return IconButton(
-      onPressed: () {
+    return GestureDetector(
+      onTap: () {
         setState(() {
           selectedIndex = index;
         });
       },
-      icon: Icon(
-        isSelected ? activeIcon : icon,
-        color: isSelected ? activeColor : inactiveColor,
-        size: 30,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isSelected ? activeIcon : icon,
+            color: isSelected ? activeColor : inactiveColor,
+            size: 28,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? activeColor : inactiveColor,
+              fontSize: 12,
+            ),
+          )
+        ],
       ),
     );
   }
